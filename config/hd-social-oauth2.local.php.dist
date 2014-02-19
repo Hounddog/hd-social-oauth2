@@ -2,8 +2,6 @@
 
 return array(
 	'social-oauth2' => array(
-		"base_url" => "http://localhost/hybridauth-git/hybridauth/", 
-
 		"providers" => array ( 
 			// openid providers
 			"OpenID" => array (

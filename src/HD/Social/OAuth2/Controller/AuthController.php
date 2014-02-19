@@ -13,22 +13,44 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 class AuthController extends AbstractActionController
 {
+
+    /**
+     * @var OAuth2Server
+     */
+    protected $server;
+
+    /**
+     * @var Hybrid_Auth
+     */
+    protected $hybrid;
+
+    /**
+     * Constructor
+     *
+     * @param $server OAuth2Server
+     * @param $hybrid Hybrid_Auth
+     */
+    public function __construct(OAuth2Server $server, Hybrid_Auth $hybrid)
+    {
+        $this->server = $server;
+        $this->hybrid = $hybrid;
+    }
+
 	public function providerAction()
 	{
-		$services = $this->getServiceLocator()->get('ServiceManager');
+        $services = $this->getServiceLocator()->get('ServiceManager');
         $config   = $services->get('Configuration');
 
-		// Make sure the provider is enabled, else 404
+        // Make sure the provider is enabled, else 404
         $provider = $this->params('provider');
-
-        $hybridAuthConfig = $config['social-oauth2'];
+        if (!in_array(strtolower($provider),$this->getEnabledProviders($config))) {
+            return $this->notFoundAction();
+        }
 
         try{
-			// initialize Hybrid_Auth with a given file
-			$hybridauth = new Hybrid_Auth( $hybridAuthConfig );
 			 
 			// try to authenticate with the selected provider
-			$adapter = $hybridauth->authenticate( $provider );
+			$adapter = $this->hybrid->authenticate( $provider );
 			 
 			// then grab the user profile
 			$user_profile = $adapter->getUserProfile();
@@ -41,9 +63,13 @@ class AuthController extends AbstractActionController
 		}
 		
 		//need to save the user
+        echo '<pre>';
 		print_r($user_profile);
         print_r($access_token);
 
+
+        $pdo = $services->get('ZF\OAuth2\Adapter\PdoAdapter');
+        print_r($pdo);
 
         exit;
 
@@ -54,20 +80,9 @@ class AuthController extends AbstractActionController
             );
         }
 
-        $storage = $services->get($config['zf-oauth2']['storage']);
-
-        $enforceState  = isset($config['zf-oauth2']['enforce_state'])  ? $config['zf-oauth2']['enforce_state']  : true;
-        $allowImplicit = isset($config['zf-oauth2']['allow_implicit']) ? $config['zf-oauth2']['allow_implicit'] : false;
-
-        // Pass a storage object or array of storage objects to the OAuth2 server class
-        $server = new OAuth2Server($storage, array('enforce_state' => $enforceState, 'allow_implicit' => $allowImplicit));
-
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new SocialCredentials($storage));
-
         $oauth2request = $this->getOAuth2Request();
         
-        $response = $server->handleTokenRequest($oauth2request);
+        $response = $this->server->handleTokenRequest($oauth2request);
         
         if ($response->isClientError()) {
             $parameters = $response->getParameters();
@@ -170,5 +185,18 @@ class AuthController extends AbstractActionController
 
         $httpResponse->setContent($response->getResponseBody());
         return $httpResponse;
+    }
+
+    private function getEnabledProviders($config)
+    {
+        $enabledProviders = array();
+
+        foreach($config['social-oauth2']['providers'] as $provider => $options) {
+            if($options['enabled']) {
+                $enabledProviders[] = strtolower($provider);
+            }
+        }
+
+        return $enabledProviders;
     }
 }
