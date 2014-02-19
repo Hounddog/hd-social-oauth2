@@ -13,39 +13,66 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 class AuthController extends AbstractActionController
 {
+
+    /**
+     * @var OAuth2Server
+     */
+    protected $server;
+
+    /**
+     * @var Hybrid_Auth
+     */
+    protected $hybrid;
+
+    /**
+     * Constructor
+     *
+     * @param $server OAuth2Server
+     * @param $hybrid Hybrid_Auth
+     */
+    public function __construct(OAuth2Server $server, Hybrid_Auth $hybrid)
+    {
+        $this->server = $server;
+        $this->hybrid = $hybrid;
+    }
+
 	public function providerAction()
 	{
-		$services = $this->getServiceLocator()->get('ServiceManager');
+        $services = $this->getServiceLocator()->get('ServiceManager');
         $config   = $services->get('Configuration');
 
-		// Make sure the provider is enabled, else 404
+        // Make sure the provider is enabled, else 404
         $provider = $this->params('provider');
+        if (!in_array(strtolower($provider),$this->getEnabledProviders($config))) {
+            return $this->notFoundAction();
+        }
 
-        $hybridAuthConfig = $config['social-oauth2'];
+        try{	 
+            // try to authenticate with the selected provider
+            $adapter = $this->hybrid->authenticate( $provider );
 
-        try{
-			// initialize Hybrid_Auth with a given file
-			$hybridauth = new Hybrid_Auth( $hybridAuthConfig );
-			 
-			// try to authenticate with the selected provider
-			$adapter = $hybridauth->authenticate( $provider );
-			 
-			// then grab the user profile
-			$user_profile = $adapter->getUserProfile();
+            // then grab the user profile
+            $user_profile = $adapter->getUserProfile();
 
-			// then grab the user profile
-			$access_token  = $adapter->getAccessToken();
+            // then grab the user profile
+            $access_token  = $adapter->getAccessToken();
 		} catch( Exception $e ){
 			echo "Error: please try again!";
 			echo "Original error message: " . $e->getMessage();
 		}
 		
-		//need to save the user
-		print_r($user_profile);
-        print_r($access_token);
+        $pdo = $services->get('ZF\OAuth2\Adapter\PdoAdapter');
+        $user = $pdo->getUser($user_profile->displayName);
 
+        if(!$user) {
+            $pdo->setUser($user_profile->displayName, $this->generatePassword(), $user_profile->firstName, $user_profile->lastName);
+            $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
 
-        exit;
+        }  else {
+            $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
+            $pdo->setUserProviderAccessToken($access_token['access_token'], $provider, $user_profile->identifier, $user_profile->displayName);
+        }
+           
 
         //from here on it is oauth time
         if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
@@ -54,21 +81,10 @@ class AuthController extends AbstractActionController
             );
         }
 
-        $storage = $services->get($config['zf-oauth2']['storage']);
-
-        $enforceState  = isset($config['zf-oauth2']['enforce_state'])  ? $config['zf-oauth2']['enforce_state']  : true;
-        $allowImplicit = isset($config['zf-oauth2']['allow_implicit']) ? $config['zf-oauth2']['allow_implicit'] : false;
-
-        // Pass a storage object or array of storage objects to the OAuth2 server class
-        $server = new OAuth2Server($storage, array('enforce_state' => $enforceState, 'allow_implicit' => $allowImplicit));
-
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new SocialCredentials($storage));
-
-        $oauth2request = $this->getOAuth2Request();
+        $oauth2request = $this->getOAuth2Request($user_profile->displayName, $provider, $user_profile->identifier, $access_token['access_token']);
         
-        $response = $server->handleTokenRequest($oauth2request);
-        
+        $response = $this->server->handleTokenRequest($oauth2request);
+
         if ($response->isClientError()) {
             $parameters = $response->getParameters();
 
@@ -82,6 +98,7 @@ class AuthController extends AbstractActionController
                 )
             );
         }
+
         return $this->setHttpResponse($response);
 	}
 
@@ -106,7 +123,7 @@ class AuthController extends AbstractActionController
      *
      * @return OAuth2Request
      */
-    protected function getOAuth2Request()
+    protected function getOAuth2Request($user_id, $provider, $provider_id, $access_token)
     {
         $zf2Request = $this->getRequest();
         $headers    = $zf2Request->getHeaders();
@@ -136,10 +153,10 @@ class AuthController extends AbstractActionController
         }
 
         $bodyParams['grant_type'] = 'social_login';//HD\Social\OAuth2\GrantType\SocialCredentials
-        $bodyParams['user_id'] = 'fakeuserid';
-        $bodyParams['provider'] = 'twitter'; //providers used to authenticate 3rd party
-        $bodyParams['provider_id'] = 'fake_provider_user_id'; //user_id returned from hybridauth
-        $bodyParams['provider_access_toke'] = 'faketoken'; //access token provided by hybridauth
+        $bodyParams['user_id'] = $user_id;
+        $bodyParams['provider'] = $provider;
+        $bodyParams['provider_id'] = $provider_id;
+        $bodyParams['provider_access_token'] = $access_token;
 
         return new OAuth2Request(
             $zf2Request->getQuery()->toArray(),
@@ -170,5 +187,24 @@ class AuthController extends AbstractActionController
 
         $httpResponse->setContent($response->getResponseBody());
         return $httpResponse;
+    }
+
+    private function getEnabledProviders($config)
+    {
+        $enabledProviders = array();
+
+        foreach($config['social-oauth2']['providers'] as $provider => $options) {
+            if($options['enabled']) {
+                $enabledProviders[] = strtolower($provider);
+            }
+        }
+
+        return $enabledProviders;
+    }
+
+    public function generatePassword( $length = 8 ) {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+        $password = substr( str_shuffle( $chars ), 0, $length );
+        return $password;
     }
 }

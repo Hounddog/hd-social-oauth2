@@ -46,8 +46,14 @@ return array(
     ),
 
     'controllers' => array(
-        'invokables' => array(
-            'HD\Social\OAuth2\Controller\Auth' => 'HD\Social\OAuth2\Controller\AuthController',
+        'factories' => array(
+            'HD\Social\OAuth2\Controller\Auth' => 'HD\Social\OAuth2\Factory\AuthControllerFactory',
         ),
+    ),
+
+    'service_manager' => array(
+        'factories' => array(
+            'ZF\OAuth2\Adapter\PdoAdapter' => 'HD\Social\OAuth2\Factory\PdoAdapterFactory',
+        )
     ),
 );
