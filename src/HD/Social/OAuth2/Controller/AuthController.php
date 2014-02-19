@@ -47,31 +47,32 @@ class AuthController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        try{
-			 
-			// try to authenticate with the selected provider
-			$adapter = $this->hybrid->authenticate( $provider );
-			 
-			// then grab the user profile
-			$user_profile = $adapter->getUserProfile();
+        try{	 
+            // try to authenticate with the selected provider
+            $adapter = $this->hybrid->authenticate( $provider );
 
-			// then grab the user profile
-			$access_token  = $adapter->getAccessToken();
+            // then grab the user profile
+            $user_profile = $adapter->getUserProfile();
+
+            // then grab the user profile
+            $access_token  = $adapter->getAccessToken();
 		} catch( Exception $e ){
 			echo "Error: please try again!";
 			echo "Original error message: " . $e->getMessage();
 		}
 		
-		//need to save the user
-        echo '<pre>';
-		print_r($user_profile);
-        print_r($access_token);
-
-
         $pdo = $services->get('ZF\OAuth2\Adapter\PdoAdapter');
-        print_r($pdo);
+        $user = $pdo->getUser($user_profile->displayName);
 
-        exit;
+        if(!$user) {
+            $pdo->setUser($user_profile->displayName, $this->generatePassword(), $user_profile->firstName, $user_profile->lastName);
+            $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
+
+        }  else {
+            $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
+            $pdo->setUserProviderAccessToken($access_token['access_token'], $provider, $user_profile->identifier, $user_profile->displayName);
+        }
+           
 
         //from here on it is oauth time
         if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
@@ -80,10 +81,10 @@ class AuthController extends AbstractActionController
             );
         }
 
-        $oauth2request = $this->getOAuth2Request();
+        $oauth2request = $this->getOAuth2Request($user_profile->displayName, $provider, $user_profile->identifier, $access_token['access_token']);
         
         $response = $this->server->handleTokenRequest($oauth2request);
-        
+
         if ($response->isClientError()) {
             $parameters = $response->getParameters();
 
@@ -97,6 +98,7 @@ class AuthController extends AbstractActionController
                 )
             );
         }
+
         return $this->setHttpResponse($response);
 	}
 
@@ -121,7 +123,7 @@ class AuthController extends AbstractActionController
      *
      * @return OAuth2Request
      */
-    protected function getOAuth2Request()
+    protected function getOAuth2Request($user_id, $provider, $provider_id, $access_token)
     {
         $zf2Request = $this->getRequest();
         $headers    = $zf2Request->getHeaders();
@@ -151,10 +153,10 @@ class AuthController extends AbstractActionController
         }
 
         $bodyParams['grant_type'] = 'social_login';//HD\Social\OAuth2\GrantType\SocialCredentials
-        $bodyParams['user_id'] = 'fakeuserid';
-        $bodyParams['provider'] = 'twitter'; //providers used to authenticate 3rd party
-        $bodyParams['provider_id'] = 'fake_provider_user_id'; //user_id returned from hybridauth
-        $bodyParams['provider_access_toke'] = 'faketoken'; //access token provided by hybridauth
+        $bodyParams['user_id'] = $user_id;
+        $bodyParams['provider'] = $provider;
+        $bodyParams['provider_id'] = $provider_id;
+        $bodyParams['provider_access_token'] = $access_token;
 
         return new OAuth2Request(
             $zf2Request->getQuery()->toArray(),
@@ -198,5 +200,11 @@ class AuthController extends AbstractActionController
         }
 
         return $enabledProviders;
+    }
+
+    public function generatePassword( $length = 8 ) {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+        $password = substr( str_shuffle( $chars ), 0, $length );
+        return $password;
     }
 }
