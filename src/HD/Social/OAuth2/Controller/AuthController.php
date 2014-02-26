@@ -99,7 +99,12 @@ class AuthController extends AbstractActionController
             );
         }
 
-        return $this->setHttpResponse($response);
+        $access_token = $response->getParameter('access_token');
+
+        $url = $config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token;
+
+        $this->plugin('redirect')->toUrl($url);
+        return FALSE;
 	}
 
 	public function hybridAction()
@@ -168,25 +173,6 @@ class AuthController extends AbstractActionController
             $zf2Request->getContent(),
             $headers
         );
-    }
-
-	/**
-     * Convert the OAuth2 response to a \Zend\Http\Response
-     *
-     * @param $response OAuth2Response
-     * @return \Zend\Http\Response
-     */
-    private function setHttpResponse(OAuth2Response $response)
-    {
-        $httpResponse = $this->getResponse();
-        $httpResponse->setStatusCode($response->getStatusCode());
-
-        $headers = $httpResponse->getHeaders();
-        $headers->addHeaders($response->getHttpHeaders());
-        $headers->addHeaderLine('Content-type', 'application/json');
-
-        $httpResponse->setContent($response->getResponseBody());
-        return $httpResponse;
     }
 
     private function getEnabledProviders($config)
