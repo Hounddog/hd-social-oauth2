@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Hd\\Social\\Oauth2\\": "src/"
+            "Hd\\Social\\OAuth2\\": "src/"
         },
         "classmap": [
             "Module.php"
