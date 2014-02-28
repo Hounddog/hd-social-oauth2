@@ -2,54 +2,55 @@
 
 return array(
 	'social-oauth2' => array(
+		"redirect_endpoint" => 'http://clingr.dev:9000/admin',
 		"providers" => array ( 
 			// openid providers
 			"OpenID" => array (
-				"enabled" => true
+				"enabled" => false
 			),
 
 			"Yahoo" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"AOL"  => array ( 
-				"enabled" => true 
+				"enabled" => false 
 			),
 
 			"Google" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ), 
 			),
 
 			"Facebook" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ), 
 			),
 
 			"Twitter" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" ) 
 			),
 
 			// windows live
 			"Live" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ) 
 			),
 
 			"MySpace" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" ) 
 			),
 
 			"LinkedIn" => array ( 
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" ) 
 			),
 
 			"Foursquare" => array (
-				"enabled" => true,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ) 
 			),
 		),

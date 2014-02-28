@@ -56,4 +56,16 @@ return array(
             'ZF\OAuth2\Adapter\PdoAdapter' => 'HD\Social\OAuth2\Factory\PdoAdapterFactory',
         )
     ),
+
+    'social-oauth2' => array(
+        "providers" => array ( 
+            // openid providers
+            "Instagram" => array (
+                'wrapper' => array(
+                    'class' => 'Hybrid_Providers_Instagram',
+                    'path' => realpath(__DIR__ . '/../src/HD/Social/OAuth2/HybridAuth/Provider/Instagram.php'),
+                ),
+            ),
+        ),
+    )
 );
