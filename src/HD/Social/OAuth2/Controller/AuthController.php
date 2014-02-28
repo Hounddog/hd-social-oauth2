@@ -99,7 +99,9 @@ class AuthController extends AbstractActionController
             );
         }
 
-        return $this->setHttpResponse($response);
+       return $this->redirect()->toUrl($config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token['access_token']);
+        //exit;
+        //return $this->setHttpResponse($response);
 	}
 
 	public function hybridAction()
