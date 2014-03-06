@@ -71,8 +71,7 @@ class AuthController extends AbstractActionController
         }  else {
             $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
             $pdo->setUserProviderAccessToken($access_token['access_token'], $provider, $user_profile->identifier, $user_profile->displayName);
-        }
-           
+        }      
 
         //from here on it is oauth time
         if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
@@ -82,7 +81,7 @@ class AuthController extends AbstractActionController
         }
 
         $oauth2request = $this->getOAuth2Request($user_profile->displayName, $provider, $user_profile->identifier, $access_token['access_token']);
-        
+       
         $response = $this->server->handleTokenRequest($oauth2request);
 
         if ($response->isClientError()) {
@@ -98,10 +97,11 @@ class AuthController extends AbstractActionController
                 )
             );
         }
+        //Get Access token from OAuth response
+        $parameters = $response->getParameters();
+        $access_token = $parameters['access_token'];
 
-       return $this->redirect()->toUrl($config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token['access_token']);
-        //exit;
-        //return $this->setHttpResponse($response);
+       return $this->redirect()->toUrl($config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token);
 	}
 
 	public function hybridAction()
@@ -170,25 +170,6 @@ class AuthController extends AbstractActionController
             $zf2Request->getContent(),
             $headers
         );
-    }
-
-	/**
-     * Convert the OAuth2 response to a \Zend\Http\Response
-     *
-     * @param $response OAuth2Response
-     * @return \Zend\Http\Response
-     */
-    private function setHttpResponse(OAuth2Response $response)
-    {
-        $httpResponse = $this->getResponse();
-        $httpResponse->setStatusCode($response->getStatusCode());
-
-        $headers = $httpResponse->getHeaders();
-        $headers->addHeaders($response->getHttpHeaders());
-        $headers->addHeaderLine('Content-type', 'application/json');
-
-        $httpResponse->setContent($response->getResponseBody());
-        return $httpResponse;
     }
 
     private function getEnabledProviders($config)
