@@ -1,6 +1,6 @@
 {
     "name": "hounddog/hd-social-oauth2",
-    "description": "Zend Framework 2 Module that provides socil authentication for zfcampus/zf-oauth2",
+    "description": "Zend Framework 2 Module that provides social authentication for zfcampus/zf-oauth2",
     "type": "library",
     "license": "MIT",
     "keywords": [
