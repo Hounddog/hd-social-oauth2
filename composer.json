@@ -18,6 +18,11 @@
             "email": "martin.shwalbe@gmail.com"
         }
     ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
     "require": {
         "php": ">=5.3.3",
         "zfcampus/zf-oauth2": "~1.0@dev"
