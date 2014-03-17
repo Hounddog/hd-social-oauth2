@@ -3,55 +3,55 @@
 return array(
 	'social-oauth2' => array(
 		"redirect_endpoint" => 'http://clingr.dev:9000/admin',
-		"providers" => array ( 
+		"providers" => array (
 			// openid providers
 			"OpenID" => array (
 				"enabled" => false
 			),
 
-			"Yahoo" => array ( 
+			"Yahoo" => array (
 				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
-			"AOL"  => array ( 
-				"enabled" => false 
+			"AOL"  => array (
+				"enabled" => false
 			),
 
-			"Google" => array ( 
+			"Google" => array (
 				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ), 
+				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
-			"Facebook" => array ( 
+			"Facebook" => array (
 				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ), 
+				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
-			"Twitter" => array ( 
+			"Twitter" => array (
 				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
+				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			// windows live
-			"Live" => array ( 
+			"Live" => array (
 				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ) 
+				"keys"    => array ( "id" => "", "secret" => "" )
 			),
 
-			"MySpace" => array ( 
+			"MySpace" => array (
 				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
+				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
-			"LinkedIn" => array ( 
+			"LinkedIn" => array (
 				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
+				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			"Foursquare" => array (
 				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ) 
+				"keys"    => array ( "id" => "", "secret" => "" )
 			),
 		),
 
