@@ -1,5 +1,3 @@
-.idea
-nbproject
 vendor
 tests/coverage
 composer.lock
