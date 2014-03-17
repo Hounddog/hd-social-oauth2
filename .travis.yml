@@ -1,0 +1,17 @@
+language: php
+php:
+ - "5.3"
+ - "5.4"
+ - "5.5"
+
+before_install:
+ - composer self-update
+ - composer install --dev --prefer-source
+
+script:
+ - ./vendor/bin/phpcs --standard=PSR2 ./src/ ./tests/ ./config/
+ - ./vendor/bin/phpunit -c tests --coverage-clover ./tests/coverage/clover.xml
+
+after_script:
+ - wget https://scrutinizer-ci.com/ocular.phar
+ - php ocular.phar code-coverage:upload --format=php-clover ./tests/coverage/clover.xml

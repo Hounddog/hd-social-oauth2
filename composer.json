@@ -1,6 +1,6 @@
 {
     "name": "hounddog/hd-social-oauth2",
-    "description": "Zend Framework 2 Module that provides socil authentication for zfcampus/oauth2",
+    "description": "Zend Framework 2 Module that provides socil authentication for zfcampus/zf-oauth2",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -9,6 +9,8 @@
         "oauth2",
         "zf2"
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "homepage": "http://hounddog.github.io/",
     "authors": [
         {
@@ -17,16 +19,17 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "zfcampus/zf-oauth2": "~1.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit" : "3.7.*",
-        "satooshi/php-coveralls": ">=0.6.0",
-        "squizlabs/php_codesniffer": "1.4.*"   
+        "squizlabs/php_codesniffer": "1.4.*"
     },
     "autoload": {
         "psr-0": {
-            "HD\\Social\\OAuth2\\": "src/"
+            "HD\\Social\\OAuth2\\": "src/",
+            "HD\\Social\\OAuth2\\Test\\": "tests/"
         },
         "classmap": [
             "Module.php"
