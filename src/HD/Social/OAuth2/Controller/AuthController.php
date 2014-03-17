@@ -4,7 +4,6 @@ namespace HD\Social\OAuth2\Controller;
 use Hybrid_Auth;
 use Zend\Mvc\Controller\AbstractActionController;
 use OAuth2\Request as OAuth2Request;
-use OAuth2\Response as OAuth2Response;
 use OAuth2\Server as OAuth2Server;
 use HD\Social\OAuth2\GrantType\SocialCredentials;
 
@@ -36,8 +35,8 @@ class AuthController extends AbstractActionController
         $this->hybrid = $hybrid;
     }
 
-	public function providerAction()
-	{
+    public function providerAction()
+    {
         $services = $this->getServiceLocator()->get('ServiceManager');
         $config   = $services->get('Configuration');
 
@@ -47,7 +46,7 @@ class AuthController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        try{	 
+        try {
             // try to authenticate with the selected provider
             $adapter = $this->hybrid->authenticate( $provider );
 
@@ -56,22 +55,22 @@ class AuthController extends AbstractActionController
 
             // then grab the user profile
             $access_token  = $adapter->getAccessToken();
-		} catch( Exception $e ){
-			echo "Error: please try again!";
-			echo "Original error message: " . $e->getMessage();
-		}
-		
+        } catch ( Exception $e ) {
+            echo "Error: please try again!";
+            echo "Original error message: " . $e->getMessage();
+        }
+
         $pdo = $services->get('ZF\OAuth2\Adapter\PdoAdapter');
         $user = $pdo->getUser($user_profile->displayName);
 
-        if(!$user) {
+        if (!$user) {
             $pdo->setUser($user_profile->displayName, $this->generatePassword(), $user_profile->firstName, $user_profile->lastName);
             $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
 
-        }  else {
+        } else {
             $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
             $pdo->setUserProviderAccessToken($access_token['access_token'], $provider, $user_profile->identifier, $user_profile->displayName);
-        }      
+        }
 
         //from here on it is oauth time
         if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
@@ -81,13 +80,14 @@ class AuthController extends AbstractActionController
         }
 
         $oauth2request = $this->getOAuth2Request($user_profile->displayName, $provider, $user_profile->identifier, $access_token['access_token']);
-       
+
         $response = $this->server->handleTokenRequest($oauth2request);
 
         if ($response->isClientError()) {
             $parameters = $response->getParameters();
 
             $errorUri   = isset($parameters['error_uri']) ? $parameters['error_uri'] : null;
+
             return new ApiProblemResponse(
                 new ApiProblem(
                     $response->getStatusCode(),
@@ -102,14 +102,14 @@ class AuthController extends AbstractActionController
         $access_token = $parameters['access_token'];
 
        return $this->redirect()->toUrl($config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token);
-	}
+    }
 
-	public function hybridAction()
-	{
-		\Hybrid_Endpoint::process();
-	}
+    public function hybridAction()
+    {
+        \Hybrid_Endpoint::process();
+    }
 
-	 /**
+     /**
      * Create an OAuth2 request based on the ZF2 request object
      *
      * Marshals:
@@ -176,8 +176,8 @@ class AuthController extends AbstractActionController
     {
         $enabledProviders = array();
 
-        foreach($config['social-oauth2']['providers'] as $provider => $options) {
-            if($options['enabled']) {
+        foreach ($config['social-oauth2']['providers'] as $provider => $options) {
+            if ($options['enabled']) {
                 $enabledProviders[] = strtolower($provider);
             }
         }
@@ -185,9 +185,11 @@ class AuthController extends AbstractActionController
         return $enabledProviders;
     }
 
-    public function generatePassword( $length = 8 ) {
+    public function generatePassword($length = 8)
+    {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
         $password = substr( str_shuffle( $chars ), 0, $length );
+
         return $password;
     }
 }

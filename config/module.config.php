@@ -1,7 +1,7 @@
 <?php
 
 return array(
-	'router' => array(
+    'router' => array(
         'routes' => array(
             'oauth' => array(
                 'child_routes' => array(
@@ -10,11 +10,11 @@ return array(
                         'options' => array(
                             'route' => '/social',
                             'defaults' => array(
-		                        'controller' => 'HD\Social\OAuth2\Controller\Auth',
-		                    ),
+                                'controller' => 'HD\Social\OAuth2\Controller\Auth',
+                            ),
                         ),
-                    	'child_routes' => array(
-                    		'provider' => array(
+                        'child_routes' => array(
+                            'provider' => array(
                                 'type' => 'Segment',
                                 'options' => array(
                                     'route' => '/:provider',
@@ -58,7 +58,7 @@ return array(
     ),
 
     'social-oauth2' => array(
-        "providers" => array ( 
+        "providers" => array (
             // openid providers
             "Instagram" => array (
                 'wrapper' => array(

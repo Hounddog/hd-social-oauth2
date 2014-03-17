@@ -14,7 +14,7 @@ use ZF\OAuth2\Controller\Exception;
 class PdoAdapterFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $services
+     * @param  ServiceLocatorInterface                          $services
      * @throws \ZF\OAuth2\Controller\Exception\RuntimeException
      * @return \ZF\OAuth2\Adapter\PdoAdapter
      */

@@ -20,7 +20,7 @@ use Zend\Mvc\Router\Http\TreeRouteStack;
 class AuthControllerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $controllers
+     * @param  ServiceLocatorInterface                          $controllers
      * @return AuthController
      * @throws \ZF\OAuth2\Controller\Exception\RuntimeException
      */
