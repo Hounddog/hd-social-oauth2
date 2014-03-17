@@ -14,13 +14,13 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
 
     protected $storage;
 
-    public function __construct($storage, array $config = array())
+    public function __construct($storage, array $config = [])
     {
         $this->storage = $storage;
-        $this->config = array_merge(array(
+        $this->config = array_merge([
             'allow_credentials_in_request_body' => true,
             'allow_public_clients' => true,
-        ), $config);
+        ], $config);
     }
 
     public function getQuerystringIdentifier()

@@ -1,71 +1,71 @@
 <?php
 
-return array(
-    'router' => array(
-        'routes' => array(
-            'oauth' => array(
-                'child_routes' => array(
-                    'social' => array(
+return [
+    'router' => [
+        'routes' => [
+            'oauth' => [
+                'child_routes' => [
+                    'social' => [
                         'type' => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => array(
+                        'options' => [
                             'route' => '/social',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller' => 'HD\Social\OAuth2\Controller\Auth',
-                            ),
-                        ),
-                        'child_routes' => array(
-                            'provider' => array(
+                            ],
+                        ],
+                        'child_routes' => [
+                            'provider' => [
                                 'type' => 'Segment',
-                                'options' => array(
+                                'options' => [
                                     'route' => '/:provider',
-                                    'constraints' => array(
+                                    'constraints' => [
                                         'provider' => '[a-zA-Z][a-zA-Z0-9_-]+',
-                                    ),
-                                    'defaults' => array(
+                                    ],
+                                    'defaults' => [
                                         'action' => 'provider',
-                                    ),
-                                ),
-                            ),
-                            'hauth' => array(
+                                    ],
+                                ],
+                            ],
+                            'hauth' => [
                                 'type' => 'Segment',
-                                'options' => array(
+                                'options' => [
                                     'route' => '/hauth',
-                                    'constraints' => array(
+                                    'constraints' => [
                                         'provider' => '[a-zA-Z][a-zA-Z0-9_-]+',
-                                    ),
-                                    'defaults' => array(
+                                    ],
+                                    'defaults' => [
                                         'action' => 'hybrid',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 
-    'controllers' => array(
-        'factories' => array(
+    'controllers' => [
+        'factories' => [
             'HD\Social\OAuth2\Controller\Auth' => 'HD\Social\OAuth2\Factory\AuthControllerFactory',
-        ),
-    ),
+        ],
+    ],
 
-    'service_manager' => array(
-        'factories' => array(
+    'service_manager' => [
+        'factories' => [
             'ZF\OAuth2\Adapter\PdoAdapter' => 'HD\Social\OAuth2\Factory\PdoAdapterFactory',
-        )
-    ),
+        ]
+    ],
 
-    'social-oauth2' => array(
-        "providers" => array (
+    'social-oauth2' => [
+        "providers" => [
             // openid providers
-            "Instagram" => array (
-                'wrapper' => array(
+            "Instagram" => [
+                'wrapper' => [
                     'class' => 'Hybrid_Providers_Instagram',
                     'path' => realpath(__DIR__ . '/../src/HD/Social/OAuth2/HybridAuth/Provider/Instagram.php'),
-                ),
-            ),
-        ),
-    )
-);
+                ],
+            ],
+        ],
+    ]
+];

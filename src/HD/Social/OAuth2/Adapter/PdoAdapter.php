@@ -18,12 +18,12 @@ class PdoAdapter extends ZFOAuthPdoAdapter
      * @param string $connection
      * @param array  $config
      */
-    public function __construct($connection, $config = array())
+    public function __construct($connection, $config = [])
     {
-        $config = array(
+        $config = [
             'user_provider_table' => 'oauth_user_provider',
             'user_provider_access_token_table' => 'oauth_user_provider_access_tokens'
-        );
+        ];
         parent::__construct($connection, $config);
     }
 
@@ -48,19 +48,19 @@ class PdoAdapter extends ZFOAuthPdoAdapter
     public function getUserProvider($username, $provider)
     {
         $stmt = $this->db->prepare($sql = sprintf('SELECT * from %s where user_id=:username and provider=:provider', $this->config['user_provider_table']));
-        $stmt->execute(array(
+        $stmt->execute([
             'username' => $username,
             'provider' => $provider
-        ));
+        ]);
 
         if (!$providerInfo = $stmt->fetch()) {
             return false;
         }
 
         // the default behavior is to use "username" as the user_id
-        return array_merge(array(
+        return array_merge([
             'user_id' => $username
-        ), $providerInfo);
+        ], $providerInfo);
     }
 
     public function setUserProviderAccessToken($access_token, $provider, $provider_id, $user_id, $expires = null, $scope = null)

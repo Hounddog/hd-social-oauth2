@@ -174,7 +174,7 @@ class AuthController extends AbstractActionController
 
     private function getEnabledProviders($config)
     {
-        $enabledProviders = array();
+        $enabledProviders = [];
 
         foreach ($config['social-oauth2']['providers'] as $provider => $options) {
             if ($options['enabled']) {

@@ -41,7 +41,7 @@ class AuthControllerFactory implements FactoryInterface
         $allowImplicit = isset($config['zf-oauth2']['allow_implicit']) ? $config['zf-oauth2']['allow_implicit'] : false;
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
-        $server = new OAuth2Server($storage, array('enforce_state' => $enforceState, 'allow_implicit' => $allowImplicit));
+        $server = new OAuth2Server($storage, ['enforce_state' => $enforceState, 'allow_implicit' => $allowImplicit]);
 
         // Add the "Social Credentials" grant type (custo grant type)
         $server->addGrantType(new SocialCredentials($storage));
@@ -70,11 +70,11 @@ class AuthControllerFactory implements FactoryInterface
         }
 
         return $router->assemble(
-            array(),
-            array(
+            [],
+            [
                 'name' => 'oauth/social/hauth',
                 'force_canonical' => true,
-            )
+            ]
         );
     }
 }
