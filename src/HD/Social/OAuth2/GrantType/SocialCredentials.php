@@ -30,13 +30,26 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
 
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        if (!$request->request("user_id") || !$request->request("provider") || !$request->request("provider_id") || !$request->request("provider_access_token")) {
-            $response->setError(400, 'invalid_request', 'Missing parameters: "username" and "provider" and "provider_id" and "access_token" required');
+        if (!$request->request("user_id")
+            || !$request->request("provider")
+            || !$request->request("provider_id")
+            || !$request->request("provider_access_token")
+            ) {
+            $response->setError(
+                400,
+                'invalid_request',
+                'Missing parameters: "username" and "provider" and "provider_id" and "access_token" required'
+            );
 
             return null;
         }
 
-        if (!$this->storage->getUserProviderAccessToken($request->request("provider_access_token"), $request->request("provider"), $request->request("provider_id"), $request->request("user_id"))) {
+        if (!$this->storage->getUserProviderAccessToken(
+            $request->request("provider_access_token"),
+            $request->request("provider"),
+            $request->request("provider_id"),
+            $request->request("user_id")
+        )) {
             return null;
         }
 
