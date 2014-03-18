@@ -49,7 +49,7 @@ class AuthControllerFactory implements FactoryInterface
         $hybridAuthConfig = $config['social-oauth2'];
         $hybridAuthConfig['base_url'] = $this->getBaseUrl($services);
 
-        $hybridauth = new Hybrid_Auth( $hybridAuthConfig );
+        $hybridauth = new Hybrid_Auth($hybridAuthConfig);
 
         return new AuthController($server, $hybridauth);
     }
@@ -58,7 +58,9 @@ class AuthControllerFactory implements FactoryInterface
     {
         $router = $services->get('Router');
         if (!$router instanceof TreeRouteStack) {
-            throw new ServiceNotCreatedException('TreeRouteStack is required to create a fully qualified base url for HybridAuth');
+            throw new ServiceNotCreatedException(
+                'TreeRouteStack is required to create a fully qualified base url for HybridAuth'
+            );
         }
 
         $request = $services->get('Request');

@@ -47,7 +47,12 @@ class PdoAdapter extends ZFOAuthPdoAdapter
 
     public function getUserProvider($username, $provider)
     {
-        $stmt = $this->db->prepare($sql = sprintf('SELECT * from %s where user_id=:username and provider=:provider', $this->config['user_provider_table']));
+        $stmt = $this->db->prepare(
+            $sql = sprintf(
+                'SELECT * from %s where user_id=:username and provider=:provider',
+                $this->config['user_provider_table']
+            )
+        );
         $stmt->execute([
             'username' => $username,
             'provider' => $provider
@@ -63,20 +68,29 @@ class PdoAdapter extends ZFOAuthPdoAdapter
         ], $providerInfo);
     }
 
-    public function setUserProviderAccessToken($access_token, $provider, $provider_id, $user_id, $expires = null, $scope = null)
-    {
+    public function setUserProviderAccessToken(
+        $access_token,
+        $provider,
+        $provider_id,
+        $user_id,
+        $expires = null,
+        $scope = null
+    ) {
         // convert expires to datestring
         $expires = date('Y-m-d H:i:s', $expires);
 
         // if it exists, update it.
         if ($this->getUserProviderAccessToken($access_token, $provider, $provider_id, $user_id)) {
             $stmt = $this->db->prepare(sprintf(
-                'UPDATE %s SET provider=:provider, provider_id=:provider_id, user_id=:user_id, expires=:expires, scope=:scope where access_token=:access_token',
+                'UPDATE %s SET provider=:provider,'
+                . 'provider_id=:provider_id, user_id=:user_id, expires=:expires,'
+                . 'scope=:scope where access_token=:access_token',
                 $this->config['user_provider_access_token_table']
             ));
         } else {
             $stmt = $this->db->prepare(sprintf(
-                'INSERT INTO %s (access_token, provider, provider_id, user_id, expires, scope) VALUES (:access_token, :provider, :provider_id, :user_id, :expires, :scope)',
+                'INSERT INTO %s (access_token, provider, provider_id, user_id, expires, scope)'
+                . ' VALUES (:access_token, :provider, :provider_id, :user_id, :expires, :scope)',
                 $this->config['user_provider_access_token_table']
             ));
         }
@@ -86,8 +100,9 @@ class PdoAdapter extends ZFOAuthPdoAdapter
 
     public function getUserProviderAccessToken($access_token, $provider, $provider_id, $user_id)
     {
-        $stmt = $this->db->prepare(
-            $sql = sprintf('SELECT * from %s where access_token=:access_token and provider=:provider and provider_id=:provider_id and user_id=:user_id',
+        $stmt = $this->db->prepare(sprintf(
+            'SELECT * from %s where access_token=:access_token '
+            . 'and provider=:provider and provider_id=:provider_id and user_id=:user_id',
             $this->config['user_provider_access_token_table']
         ));
 
@@ -123,7 +138,8 @@ class PdoAdapter extends ZFOAuthPdoAdapter
             ));
         } else {
             $stmt = $this->db->prepare(sprintf(
-                'INSERT INTO %s (username, password, first_name, last_name) VALUES (:username, :password, :firstName, :lastName)',
+                'INSERT INTO %s (username, password, first_name, last_name) '
+                . 'VALUES (:username, :password, :firstName, :lastName)',
                 $this->config['user_table']
             ));
         }

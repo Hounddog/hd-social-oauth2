@@ -42,13 +42,13 @@ class AuthController extends AbstractActionController
 
         // Make sure the provider is enabled, else 404
         $provider = $this->params('provider');
-        if (!in_array(strtolower($provider),$this->getEnabledProviders($config))) {
+        if (!in_array(strtolower($provider), $this->getEnabledProviders($config))) {
             return $this->notFoundAction();
         }
 
         try {
             // try to authenticate with the selected provider
-            $adapter = $this->hybrid->authenticate( $provider );
+            $adapter = $this->hybrid->authenticate($provider);
 
             // then grab the user profile
             $user_profile = $adapter->getUserProfile();
@@ -64,12 +64,26 @@ class AuthController extends AbstractActionController
         $user = $pdo->getUser($user_profile->displayName);
 
         if (!$user) {
-            $pdo->setUser($user_profile->displayName, $this->generatePassword(), $user_profile->firstName, $user_profile->lastName);
-            $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
+            $pdo->setUser(
+                $user_profile->displayName,
+                $this->generatePassword(),
+                $user_profile->firstName,
+                $user_profile->lastName
+            );
+            $pdo->setUserProvider(
+                $provider,
+                $user_profile->identifier,
+                $user_profile->displayName
+            );
 
         } else {
             $pdo->setUserProvider($provider, $user_profile->identifier, $user_profile->displayName);
-            $pdo->setUserProviderAccessToken($access_token['access_token'], $provider, $user_profile->identifier, $user_profile->displayName);
+            $pdo->setUserProviderAccessToken(
+                $access_token['access_token'],
+                $provider,
+                $user_profile->identifier,
+                $user_profile->displayName
+            );
         }
 
         //from here on it is oauth time
@@ -79,7 +93,12 @@ class AuthController extends AbstractActionController
             );
         }
 
-        $oauth2request = $this->getOAuth2Request($user_profile->displayName, $provider, $user_profile->identifier, $access_token['access_token']);
+        $oauth2request = $this->getOAuth2Request(
+            $user_profile->displayName,
+            $provider,
+            $user_profile->identifier,
+            $access_token['access_token']
+        );
 
         $response = $this->server->handleTokenRequest($oauth2request);
 
@@ -101,7 +120,12 @@ class AuthController extends AbstractActionController
         $parameters = $response->getParameters();
         $access_token = $parameters['access_token'];
 
-       return $this->redirect()->toUrl($config['social-oauth2']['redirect_endpoint'] . '/' . $user_profile->displayName . '?access_token=' . $access_token);
+        return $this->redirect()->toUrl(
+            $config['social-oauth2']['redirect_endpoint']
+            . '/'
+            . $user_profile->displayName
+            . '?access_token=' . $access_token
+        );
     }
 
     public function hybridAction()
@@ -188,7 +212,7 @@ class AuthController extends AbstractActionController
     public function generatePassword($length = 8)
     {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
-        $password = substr( str_shuffle( $chars ), 0, $length );
+        $password = substr(str_shuffle($chars), 0, $length);
 
         return $password;
     }
