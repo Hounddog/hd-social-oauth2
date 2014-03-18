@@ -1,63 +1,63 @@
 <?php
 
-return array(
-	'social-oauth2' => array(
-		"redirect_endpoint" => 'http://clingr.dev:9000/admin',
-		"providers" => array ( 
-			// openid providers
-			"OpenID" => array (
-				"enabled" => false
-			),
+return [
+    'social-oauth2' => [
+        "redirect_endpoint" => 'http://clingr.dev:9000/admin',
+        "providers" => [
+            // openid providers
+            "OpenID" => [
+                "enabled" => false
+            ],
 
-			"Yahoo" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ),
-			),
+            "Yahoo" => [
+                "enabled" => false,
+                "keys"    => [ "id" => "", "secret" => "" ],
+            ],
 
-			"AOL"  => array ( 
-				"enabled" => false 
-			),
+            "AOL"  => [
+                "enabled" => false
+            ],
 
-			"Google" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ), 
-			),
+            "Google" => [
+                "enabled" => false,
+                "keys"    => [ "id" => "", "secret" => "" ],
+            ],
 
-			"Facebook" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ), 
-			),
+            "Facebook" => [
+                "enabled" => false,
+                "keys"    => [ "id" => "", "secret" => "" ],
+            ],
 
-			"Twitter" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
-			),
+            "Twitter" => [
+                "enabled" => false,
+                "keys"    => [ "key" => "", "secret" => "" ]
+            ],
 
-			// windows live
-			"Live" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ) 
-			),
+            // windows live
+            "Live" => [
+                "enabled" => false,
+                "keys"    => [ "id" => "", "secret" => "" ]
+            ],
 
-			"MySpace" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
-			),
+            "MySpace" => [
+                "enabled" => false,
+                "keys"    => [ "key" => "", "secret" => "" ]
+            ],
 
-			"LinkedIn" => array ( 
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" ) 
-			),
+            "LinkedIn" => [
+                "enabled" => false,
+                "keys"    => [ "key" => "", "secret" => "" ]
+            ],
 
-			"Foursquare" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ) 
-			),
-		),
+            "Foursquare" => [
+                "enabled" => false,
+                "keys"    => [ "id" => "", "secret" => "" ]
+            ],
+        ],
 
-		// if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
-		"debug_mode" => false,
+        // if you want to enable logging, set 'debug_mode' to true  then provide a writable file by the web server on "debug_file"
+        "debug_mode" => false,
 
-		"debug_file" => "",
-	),
-);
+        "debug_file" => "",
+    ],
+];

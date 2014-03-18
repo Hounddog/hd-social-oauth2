@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace HD\Social\OAuth2\GrantType;
 
@@ -14,13 +14,13 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
 
     protected $storage;
 
-    public function __construct($storage, array $config = array())
+    public function __construct($storage, array $config = [])
     {
         $this->storage = $storage;
-        $this->config = array_merge(array(
+        $this->config = array_merge([
             'allow_credentials_in_request_body' => true,
             'allow_public_clients' => true,
-        ), $config);
+        ], $config);
     }
 
     public function getQuerystringIdentifier()
@@ -28,15 +28,15 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
         return 'social_login';
     }
 
-	public function validateRequest(RequestInterface $request, ResponseInterface $response)
-	{
+    public function validateRequest(RequestInterface $request, ResponseInterface $response)
+    {
         if (!$request->request("user_id") || !$request->request("provider") || !$request->request("provider_id") || !$request->request("provider_access_token")) {
             $response->setError(400, 'invalid_request', 'Missing parameters: "username" and "provider" and "provider_id" and "access_token" required');
 
             return null;
         }
 
-        if(!$this->storage->getUserProviderAccessToken($request->request("provider_access_token"), $request->request("provider"), $request->request("provider_id"), $request->request("user_id"))){
+        if (!$this->storage->getUserProviderAccessToken($request->request("provider_access_token"), $request->request("provider"), $request->request("provider_id"), $request->request("user_id"))) {
             return null;
         }
 
@@ -55,13 +55,13 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
         $this->userInfo = $userInfo;
 
         return true;
-	}
+    }
 
-    public function getClientId() 
+    public function getClientId()
     {
         return 'fake';
     }
-    
+
     public function getUserId()
     {
         return $this->userInfo['user_id'];
@@ -71,11 +71,11 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
     {
         return isset($this->userInfo['scope']) ? $this->userInfo['scope'] : null;
     }
-    
+
     public function createAccessToken(AccessTokenInterface $accessToken, $client_id, $user_id, $scope)
     {
         $includeRefreshToken = false;
 
-    	return $accessToken->createAccessToken($client_id, $user_id, $scope, $includeRefreshToken);
+        return $accessToken->createAccessToken($client_id, $user_id, $scope, $includeRefreshToken);
     }
 }

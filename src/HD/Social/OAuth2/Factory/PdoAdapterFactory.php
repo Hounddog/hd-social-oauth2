@@ -14,7 +14,7 @@ use ZF\OAuth2\Controller\Exception;
 class PdoAdapterFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $services
+     * @param  ServiceLocatorInterface                          $services
      * @throws \ZF\OAuth2\Controller\Exception\RuntimeException
      * @return \ZF\OAuth2\Adapter\PdoAdapter
      */
@@ -31,10 +31,10 @@ class PdoAdapterFactory implements FactoryInterface
         $username = isset($config['zf-oauth2']['db']['username']) ? $config['zf-oauth2']['db']['username'] : null;
         $password = isset($config['zf-oauth2']['db']['password']) ? $config['zf-oauth2']['db']['password'] : null;
 
-        return new PdoAdapter(array(
+        return new PdoAdapter([
             'dsn'      => $config['zf-oauth2']['db']['dsn'],
             'username' => $username,
             'password' => $password,
-        ));
+        ]);
     }
 }

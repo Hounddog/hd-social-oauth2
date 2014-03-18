@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="phpunit.php" colors="true">
+    <testsuite>
+        <directory>./HD/Social/OAuth2/Test</directory>
+    </testsuite>
+
+    <filter>
+        <whitelist>
+            <directory>../src/</directory>
+        </whitelist>
+    </filter>
+</phpunit>
