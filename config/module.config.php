@@ -62,7 +62,7 @@ return [
             // openid providers
             "Instagram" => [
                 'wrapper' => [
-                    'class' => 'Hybrid_Providers_Instagram',
+                    'class' => 'HD\Social\OAuth2\HybridAuth\Provider\Instagram',
                     'path' => realpath(__DIR__ . '/../src/HD/Social/OAuth2/HybridAuth/Provider/Instagram.php'),
                 ],
             ],
