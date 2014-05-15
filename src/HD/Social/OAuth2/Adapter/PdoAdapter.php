@@ -106,7 +106,7 @@ class PdoAdapter extends ZFOAuthPdoAdapter
             $this->config['user_provider_access_token_table']
         ));
 
-        $token = $stmt->execute(compact('access_token', 'provider', 'provider_id', 'user_id'));
+        $stmt->execute(compact('access_token', 'provider', 'provider_id', 'user_id'));
 
         if ($token = $stmt->fetch()) {
             // convert date string back to timestamp

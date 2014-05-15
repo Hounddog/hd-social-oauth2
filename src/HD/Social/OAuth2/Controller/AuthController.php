@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use OAuth2\Request as OAuth2Request;
 use OAuth2\Server as OAuth2Server;
 use HD\Social\OAuth2\GrantType\SocialCredentials;
+use Zend\Http\PhpEnvironment\Request as PhpEnvironmentRequest;
 
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -46,19 +47,21 @@ class AuthController extends AbstractActionController
             return $this->notFoundAction();
         }
 
+        $adapter = null; 
+
         try {
             // try to authenticate with the selected provider
             $adapter = $this->hybrid->authenticate($provider);
-
-            // then grab the user profile
-            $user_profile = $adapter->getUserProfile();
-
-            // then grab the user profile
-            $access_token  = $adapter->getAccessToken();
-        } catch ( Exception $e ) {
+        } catch ( \Exception $e ) {
             echo "Error: please try again!";
             echo "Original error message: " . $e->getMessage();
         }
+
+        // then grab the user profile
+        $user_profile = $adapter->getUserProfile();
+
+        // then grab the user profile
+        $access_token  = $adapter->getAccessToken();
 
         $pdo = $services->get('ZF\OAuth2\Adapter\PdoAdapter');
         $user = $pdo->getUser($user_profile->displayName);
@@ -154,12 +157,6 @@ class AuthController extends AbstractActionController
         $zf2Request = $this->getRequest();
         $headers    = $zf2Request->getHeaders();
 
-        // Marshal content type, so we can seed it into the $_SERVER array
-        $contentType = '';
-        if ($headers->has('Content-Type')) {
-            $contentType = $headers->get('Content-Type')->getFieldValue();
-        }
-
         // Get $_SERVER superglobal
         $server = [];
         if ($zf2Request instanceof PhpEnvironmentRequest) {
@@ -178,6 +175,7 @@ class AuthController extends AbstractActionController
             $headers['PHP_AUTH_PW'] = $server['PHP_AUTH_PW'];
         }
 
+        $bodyParams = array();
         $bodyParams['grant_type'] = 'social_login';//HD\Social\OAuth2\GrantType\SocialCredentials
         $bodyParams['user_id'] = $user_id;
         $bodyParams['provider'] = $provider;
