@@ -45,7 +45,6 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
         }
 
         if (!$this->storage->getUserProviderAccessToken(
-            $request->request("provider_access_token"),
             $request->request("provider"),
             $request->request("provider_id"),
             $request->request("user_id")
@@ -53,7 +52,7 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
             return null;
         }
 
-        $userInfo = $this->storage->getUserDetails($request->request("user_id"));
+        $userInfo = $this->storage->getUser($request->request("user_id"));
 
         if (empty($userInfo)) {
             $response->setError(400, 'invalid_grant', 'Unable to retrieve user information');
@@ -66,7 +65,6 @@ class SocialCredentials implements GrantTypeInterface, ClientAssertionTypeInterf
         }
 
         $this->userInfo = $userInfo;
-
         return true;
     }
 
